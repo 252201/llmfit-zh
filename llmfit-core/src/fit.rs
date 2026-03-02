@@ -1543,14 +1543,25 @@ mod tests {
         let sys_3060 = test_system_with_gpu(64.0, 12.0, "NVIDIA GeForce RTX 3060");
 
         let tps_4090 = estimate_tps(
-            &model, "Q4_K_M", &sys_4090, RunMode::Gpu, InferenceRuntime::LlamaCpp,
+            &model,
+            "Q4_K_M",
+            &sys_4090,
+            RunMode::Gpu,
+            InferenceRuntime::LlamaCpp,
         );
         let tps_3060 = estimate_tps(
-            &model, "Q4_K_M", &sys_3060, RunMode::Gpu, InferenceRuntime::LlamaCpp,
+            &model,
+            "Q4_K_M",
+            &sys_3060,
+            RunMode::Gpu,
+            InferenceRuntime::LlamaCpp,
         );
 
         // RTX 4090 (1008 GB/s) should be ~2.8x faster than RTX 3060 (360 GB/s)
-        assert!(tps_4090 > tps_3060 * 2.0, "4090={tps_4090}, 3060={tps_3060}");
+        assert!(
+            tps_4090 > tps_3060 * 2.0,
+            "4090={tps_4090}, 3060={tps_3060}"
+        );
     }
 
     #[test]
@@ -1561,7 +1572,11 @@ mod tests {
         let system = test_system_with_gpu(64.0, 24.0, "NVIDIA GeForce RTX 4090");
 
         let tps = estimate_tps(
-            &model, "Q4_K_M", &system, RunMode::Gpu, InferenceRuntime::LlamaCpp,
+            &model,
+            "Q4_K_M",
+            &system,
+            RunMode::Gpu,
+            InferenceRuntime::LlamaCpp,
         );
 
         // Should be in the 30-50 tok/s range (measured: ~40)
@@ -1576,7 +1591,11 @@ mod tests {
         let system = test_system_with_gpu(16.0, 16.0, "Tesla T4");
 
         let tps = estimate_tps(
-            &model, "F16", &system, RunMode::Gpu, InferenceRuntime::LlamaCpp,
+            &model,
+            "F16",
+            &system,
+            RunMode::Gpu,
+            InferenceRuntime::LlamaCpp,
         );
 
         // Should be in the 10-25 tok/s range (measured: ~16)
@@ -1591,7 +1610,11 @@ mod tests {
         let system = test_system_with_gpu(16.0, 10.0, "Some Unknown GPU");
 
         let tps = estimate_tps(
-            &model, "Q4_K_M", &system, RunMode::Gpu, InferenceRuntime::LlamaCpp,
+            &model,
+            "Q4_K_M",
+            &system,
+            RunMode::Gpu,
+            InferenceRuntime::LlamaCpp,
         );
 
         // Should fall back to K=220 path and produce a positive value
@@ -1606,14 +1629,24 @@ mod tests {
         let sys_unknown = test_system_with_gpu(64.0, 24.0, "Unknown GPU");
 
         let tps_4090 = estimate_tps(
-            &model, "Q4_K_M", &sys_4090, RunMode::CpuOnly, InferenceRuntime::LlamaCpp,
+            &model,
+            "Q4_K_M",
+            &sys_4090,
+            RunMode::CpuOnly,
+            InferenceRuntime::LlamaCpp,
         );
         let tps_unknown = estimate_tps(
-            &model, "Q4_K_M", &sys_unknown, RunMode::CpuOnly, InferenceRuntime::LlamaCpp,
+            &model,
+            "Q4_K_M",
+            &sys_unknown,
+            RunMode::CpuOnly,
+            InferenceRuntime::LlamaCpp,
         );
 
         // CPU-only should produce the same result regardless of GPU
-        assert!((tps_4090 - tps_unknown).abs() < 0.01,
-            "CPU-only should ignore GPU: 4090={tps_4090}, unknown={tps_unknown}");
+        assert!(
+            (tps_4090 - tps_unknown).abs() < 0.01,
+            "CPU-only should ignore GPU: 4090={tps_4090}, unknown={tps_unknown}"
+        );
     }
 }
