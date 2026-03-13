@@ -16,7 +16,7 @@ pub enum Theme {
 impl Theme {
     pub fn label(&self) -> &'static str {
         match self {
-            Theme::Default => "Default",
+            Theme::Default => "默认",
             Theme::Dracula => "Dracula",
             Theme::Solarized => "Solarized",
             Theme::Nord => "Nord",

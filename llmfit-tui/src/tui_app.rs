@@ -65,12 +65,12 @@ pub enum FitFilter {
 impl FitFilter {
     pub fn label(&self) -> &str {
         match self {
-            FitFilter::All => "All",
-            FitFilter::Perfect => "Perfect",
-            FitFilter::Good => "Good",
-            FitFilter::Marginal => "Marginal",
-            FitFilter::TooTight => "Too Tight",
-            FitFilter::Runnable => "Runnable",
+            FitFilter::All => "全部",
+            FitFilter::Perfect => "完美",
+            FitFilter::Good => "良好",
+            FitFilter::Marginal => "勉强",
+            FitFilter::TooTight => "内存不足",
+            FitFilter::Runnable => "可运行",
         }
     }
 
@@ -97,9 +97,9 @@ pub enum AvailabilityFilter {
 impl AvailabilityFilter {
     pub fn label(&self) -> &str {
         match self {
-            AvailabilityFilter::All => "All",
-            AvailabilityFilter::HasGguf => "GGUF Avail",
-            AvailabilityFilter::Installed => "Installed",
+            AvailabilityFilter::All => "全部",
+            AvailabilityFilter::HasGguf => "有GGUF",
+            AvailabilityFilter::Installed => "已安装",
         }
     }
 

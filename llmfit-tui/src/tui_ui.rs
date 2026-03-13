@@ -110,7 +110,7 @@ fn draw_system_bar(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
     };
 
     let ollama_info = if app.ollama_available {
-        format!("Ollama: ✓ ({} installed)", app.ollama_installed_count)
+        format!("Ollama: ✓ (已安装 {})", app.ollama_installed_count)
     } else {
         "Ollama: ✗".to_string()
     };
@@ -121,9 +121,9 @@ fn draw_system_bar(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
     };
 
     let mlx_info = if app.mlx_available {
-        format!("MLX: ✓ ({} installed)", app.mlx_installed.len())
+        format!("MLX: ✓ (已安装 {})", app.mlx_installed.len())
     } else if !app.mlx_installed.is_empty() {
-        format!("MLX: ({} cached)", app.mlx_installed.len())
+        format!("MLX: (已缓存 {})", app.mlx_installed.len())
     } else {
         "MLX: ✗".to_string()
     };
@@ -136,9 +136,9 @@ fn draw_system_bar(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
     };
 
     let llamacpp_info = if app.llamacpp_available {
-        format!("llama.cpp: ✓ ({} models)", app.llamacpp_installed_count)
+        format!("llama.cpp: ✓ (模型数 {})", app.llamacpp_installed_count)
     } else if !app.llamacpp_installed.is_empty() {
-        format!("llama.cpp: ({} cached)", app.llamacpp_installed_count)
+        format!("llama.cpp: (已缓存 {})", app.llamacpp_installed_count)
     } else {
         "llama.cpp: ✗".to_string()
     };
@@ -163,7 +163,7 @@ fn draw_system_bar(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
         Span::styled("RAM: ", Style::default().fg(tc.muted)),
         Span::styled(
             format!(
-                "{:.1} GB avail / {:.1} GB total{}",
+                "{:.1} GB 可用 / {:.1} GB 总共{}",
                 app.specs.available_ram_gb,
                 app.specs.total_ram_gb,
                 if is_running_in_wsl() { " (WSL)" } else { "" }
@@ -184,13 +184,8 @@ fn draw_system_bar(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
         spans.push(Span::styled("  │  ", Style::default().fg(tc.muted)));
         spans.push(Span::styled(
             format!(
-                "{} model{} hidden (incompatible backend)",
-                app.backend_hidden_count,
-                if app.backend_hidden_count == 1 {
-                    ""
-                } else {
-                    "s"
-                }
+                "已隐藏 {} 个模型 (不兼容的后端)",
+                app.backend_hidden_count
             ),
             Style::default().fg(tc.muted),
         ));
@@ -241,7 +236,7 @@ fn draw_search_and_filters(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeC
 
     let search_text = if app.search_query.is_empty() && app.input_mode == InputMode::Normal {
         Line::from(Span::styled(
-            "Press / to search...",
+            "按 / 搜索...",
             Style::default().fg(tc.muted),
         ))
     } else {
@@ -251,7 +246,7 @@ fn draw_search_and_filters(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeC
     let search_block = Block::default()
         .borders(Borders::ALL)
         .border_style(search_style)
-        .title(" Search ")
+        .title(" 搜索 ")
         .title_style(search_style);
 
     let search = Paragraph::new(search_text).block(search_block);
@@ -268,7 +263,7 @@ fn draw_search_and_filters(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeC
     let active_count = app.selected_providers.iter().filter(|&&s| s).count();
     let total_count = app.providers.len();
     let provider_text = if active_count == total_count {
-        "All".to_string()
+        "全部".to_string()
     } else {
         format!("{}/{}", active_count, total_count)
     };
@@ -283,7 +278,7 @@ fn draw_search_and_filters(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeC
     let provider_block = Block::default()
         .borders(Borders::ALL)
         .border_style(Style::default().fg(tc.border))
-        .title(" Providers (P) ")
+        .title(" 提供商 (P) ")
         .title_style(Style::default().fg(tc.muted));
 
     let providers = Paragraph::new(Line::from(Span::styled(
@@ -297,7 +292,7 @@ fn draw_search_and_filters(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeC
     let active_count = app.selected_use_cases.iter().filter(|&&s| s).count();
     let total_count = app.use_cases.len();
     let use_case_text = if active_count == total_count {
-        "All".to_string()
+        "全部".to_string()
     } else {
         format!("{}/{}", active_count, total_count)
     };
@@ -312,7 +307,7 @@ fn draw_search_and_filters(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeC
     let use_case_block = Block::default()
         .borders(Borders::ALL)
         .border_style(Style::default().fg(tc.border))
-        .title(" Use Case (U) ")
+        .title(" 用途 (U) ")
         .title_style(Style::default().fg(tc.muted));
 
     let use_cases = Paragraph::new(Line::from(Span::styled(
@@ -326,7 +321,7 @@ fn draw_search_and_filters(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeC
     let active_cap_count = app.selected_capabilities.iter().filter(|&&s| s).count();
     let total_cap_count = app.capabilities.len();
     let cap_text = if active_cap_count == total_cap_count {
-        "All".to_string()
+        "全部".to_string()
     } else {
         format!("{}/{}", active_cap_count, total_cap_count)
     };
@@ -341,7 +336,7 @@ fn draw_search_and_filters(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeC
     let cap_block = Block::default()
         .borders(Borders::ALL)
         .border_style(Style::default().fg(tc.border))
-        .title(" Caps (C) ")
+        .title(" 能力 (C) ")
         .title_style(Style::default().fg(tc.muted));
 
     let caps = Paragraph::new(Line::from(Span::styled(
@@ -355,7 +350,7 @@ fn draw_search_and_filters(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeC
     let sort_block = Block::default()
         .borders(Borders::ALL)
         .border_style(Style::default().fg(tc.border))
-        .title(" Sort [s] ")
+        .title(" 排序 [s] ")
         .title_style(Style::default().fg(tc.muted));
 
     let sort_text = Paragraph::new(Line::from(Span::styled(
@@ -378,7 +373,7 @@ fn draw_search_and_filters(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeC
     let fit_block = Block::default()
         .borders(Borders::ALL)
         .border_style(Style::default().fg(tc.border))
-        .title(" Fit [f] ")
+        .title(" 匹配 [f] ")
         .title_style(Style::default().fg(tc.muted));
 
     let fit_text = Paragraph::new(Line::from(Span::styled(app.fit_filter.label(), fit_style)))
@@ -395,7 +390,7 @@ fn draw_search_and_filters(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeC
     let avail_block = Block::default()
         .borders(Borders::ALL)
         .border_style(Style::default().fg(tc.border))
-        .title(" Avail [a] ")
+        .title(" 可用 [a] ")
         .title_style(Style::default().fg(tc.muted));
 
     let avail_text = Paragraph::new(Line::from(Span::styled(
@@ -409,7 +404,7 @@ fn draw_search_and_filters(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeC
     let theme_block = Block::default()
         .borders(Borders::ALL)
         .border_style(Style::default().fg(tc.border))
-        .title(" Theme [t] ")
+        .title(" 主题 [t] ")
         .title_style(Style::default().fg(tc.muted));
 
     let theme_text = Paragraph::new(Line::from(Span::styled(
@@ -463,8 +458,8 @@ fn pull_indicator(percent: Option<f64>, tick: u64) -> String {
 fn draw_table(frame: &mut Frame, app: &mut App, area: Rect, tc: &ThemeColors) {
     let sort_col = app.sort_column;
     let header_names = [
-        "", "Inst", "Model", "Provider", "Params", "Score", "tok/s*", "Quant", "Mode", "Mem %",
-        "Ctx", "Date", "Fit", "Use Case",
+        "", "安装", "模型", "提供商", "参数", "评分", "tok/s*", "量化", "模式", "显存 %",
+        "上下文", "日期", "匹配", "用途",
     ];
     let sort_col_idx: Option<usize> = match sort_col {
         SortColumn::Score => Some(5),
@@ -638,7 +633,7 @@ fn draw_table(frame: &mut Frame, app: &mut App, area: Rect, tc: &ThemeColors) {
     ];
 
     let count_text = format!(
-        " Models ({}/{}) ",
+        " 模型 ({}/{}) ",
         app.filtered_fits.len(),
         app.all_fits.len()
     );
@@ -685,25 +680,25 @@ fn draw_compare(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
         let block = Block::default()
             .borders(Borders::ALL)
             .border_style(Style::default().fg(tc.border))
-            .title(" Compare ")
+            .title(" 对比 ")
             .title_style(Style::default().fg(tc.title).add_modifier(Modifier::BOLD));
         let body = Paragraph::new(vec![
             Line::from(""),
             Line::from(Span::styled(
-                "  Compare requires two different models.",
+                "  对比功能需要选择两个不同的模型。",
                 Style::default().fg(tc.warning),
             )),
             Line::from(""),
             Line::from(Span::styled(
-                "  1) Move to a model and press m (mark).",
+                "  1) 移动到一个模型上并按下 m (标记)。",
                 Style::default().fg(tc.muted),
             )),
             Line::from(Span::styled(
-                "  2) Move to another model and press c (compare).",
+                "  2) 移动到另一个模型上并按下 c (对比)。",
                 Style::default().fg(tc.muted),
             )),
             Line::from(Span::styled(
-                "  3) Press c again to return.",
+                "  3) 再次按下 c 返回。",
                 Style::default().fg(tc.muted),
             )),
         ])
@@ -722,7 +717,7 @@ fn draw_compare(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
         .split(sections[1]);
 
     let title = Paragraph::new(Line::from(vec![
-        Span::styled(" Compare ", Style::default().fg(tc.accent).bold()),
+        Span::styled(" 对比 ", Style::default().fg(tc.accent).bold()),
         Span::styled(
             format!("{}  vs  {}", left.model.name, right.model.name),
             Style::default().fg(tc.fg),
@@ -800,7 +795,7 @@ fn draw_compare(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
     let ctx_style = Style::default().fg(if ctx_delta >= 0 { tc.good } else { tc.warning });
 
     let legend = Paragraph::new(Line::from(Span::styled(
-        "  Delta hints: ↑ value increased, ↓ value decreased (for Mem%, lower is better)",
+        "  差异提示: ↑ 数值增加, ↓ 数值减少 (对于显存%, 越低越好)",
         Style::default().fg(tc.muted),
     )));
     frame.render_widget(legend, sections[0]);
@@ -844,7 +839,7 @@ fn draw_compare(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
         frame,
         cols[0],
         tc,
-        " Marked (baseline) ",
+        " 已标记 (基准) ",
         left,
         &left_metrics,
     );
@@ -852,7 +847,7 @@ fn draw_compare(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
         frame,
         cols[1],
         tc,
-        " Selected (delta vs baseline) ",
+        " 当前选中 (对比基准差异) ",
         right,
         &right_metrics,
     );
@@ -900,80 +895,80 @@ fn render_compare_panel(
     let lines = vec![
         Line::from(""),
         Line::from(vec![
-            Span::styled("  Model: ", Style::default().fg(tc.muted)),
+            Span::styled("  模型:   ", Style::default().fg(tc.muted)),
             Span::styled(fit.model.name.clone(), Style::default().fg(tc.fg).bold()),
         ]),
         Line::from(vec![
-            Span::styled("  Provider:", Style::default().fg(tc.muted)),
+            Span::styled("  提供商: ", Style::default().fg(tc.muted)),
             Span::styled(
                 format!(" {}", fit.model.provider),
                 Style::default().fg(tc.fg),
             ),
         ]),
         Line::from(vec![
-            Span::styled("  Use:    ", Style::default().fg(tc.muted)),
+            Span::styled("  用途:   ", Style::default().fg(tc.muted)),
             Span::styled(
                 format!(" {}", fit.use_case.label()),
                 Style::default().fg(tc.fg),
             ),
         ]),
         Line::from(vec![
-            Span::styled("  Released:", Style::default().fg(tc.muted)),
+            Span::styled("  发布:   ", Style::default().fg(tc.muted)),
             Span::styled(
                 format!(
                     " {}",
-                    fit.model.release_date.as_deref().unwrap_or("Unknown")
+                    fit.model.release_date.as_deref().unwrap_or("未知")
                 ),
                 Style::default().fg(tc.fg),
             ),
         ]),
         Line::from(vec![
-            Span::styled("  Score: ", Style::default().fg(tc.muted)),
+            Span::styled("  评分:   ", Style::default().fg(tc.muted)),
             Span::styled(metrics.score.clone(), metrics.score_style),
         ]),
         Line::from(vec![
-            Span::styled("  Fit:   ", Style::default().fg(tc.muted)),
+            Span::styled("  匹配:   ", Style::default().fg(tc.muted)),
             Span::styled(
                 format!("{} {}", fit_indicator(fit.fit_level), fit.fit_text()),
                 Style::default().fg(fit_color(fit.fit_level, tc)),
             ),
         ]),
         Line::from(vec![
-            Span::styled("  tok/s: ", Style::default().fg(tc.muted)),
+            Span::styled("  tok/s:  ", Style::default().fg(tc.muted)),
             Span::styled(metrics.tps.clone(), metrics.tps_style),
         ]),
         Line::from(vec![
-            Span::styled("  Mem%:  ", Style::default().fg(tc.muted)),
+            Span::styled("  显存%:  ", Style::default().fg(tc.muted)),
             Span::styled(metrics.mem.clone(), metrics.mem_style),
         ]),
         Line::from(vec![
-            Span::styled("  Runtime:", Style::default().fg(tc.muted)),
+            Span::styled("  运行时: ", Style::default().fg(tc.muted)),
             Span::styled(
                 format!(" {}", fit.runtime_text()),
                 Style::default().fg(tc.fg),
             ),
         ]),
         Line::from(vec![
-            Span::styled("  Mode:   ", Style::default().fg(tc.muted)),
+            Span::styled("  模式:   ", Style::default().fg(tc.muted)),
             Span::styled(fit.run_mode_text(), Style::default().fg(tc.fg)),
         ]),
         Line::from(vec![
-            Span::styled("  Params: ", Style::default().fg(tc.muted)),
+            Span::styled("  参数:   ", Style::default().fg(tc.muted)),
             Span::styled(metrics.params.clone(), metrics.params_style),
         ]),
         Line::from(vec![
-            Span::styled("  Context:", Style::default().fg(tc.muted)),
+            Span::styled("  上下文: ", Style::default().fg(tc.muted)),
             Span::styled(metrics.context.clone(), metrics.context_style),
         ]),
         Line::from(vec![
-            Span::styled("  Quant:  ", Style::default().fg(tc.muted)),
+            Span::styled("  量化:   ", Style::default().fg(tc.muted)),
             Span::styled(
-                format!("{} (default {})", fit.best_quant, fit.model.quantization),
+                format!("{} (默认 {})", fit.best_quant, fit.model.quantization),
                 Style::default().fg(tc.good),
             ),
         ]),
         Line::from(vec![
-            Span::styled("  Badges: ", Style::default().fg(tc.muted)),
+            Span::styled("  标签:   ", Style::default().fg(tc.muted)),
             Span::styled(compare_badges(fit), Style::default().fg(tc.info)),
         ]),
     ];
@@ -995,9 +990,9 @@ fn draw_multi_compare(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors
         let block = Block::default()
             .borders(Borders::ALL)
             .border_style(Style::default().fg(tc.border))
-            .title(" Compare ")
+            .title(" 对比 ")
             .title_style(Style::default().fg(tc.title).add_modifier(Modifier::BOLD));
-        let body = Paragraph::new("  No models selected for comparison.").block(block);
+        let body = Paragraph::new("  未选择用于对比的模型。").block(block);
         frame.render_widget(body, area);
         return;
     }
@@ -1012,9 +1007,9 @@ fn draw_multi_compare(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors
         let block = Block::default()
             .borders(Borders::ALL)
             .border_style(Style::default().fg(tc.border))
-            .title(" Compare ")
+            .title(" 对比 ")
             .title_style(Style::default().fg(tc.title).add_modifier(Modifier::BOLD));
-        let body = Paragraph::new("  Need at least 2 models to compare.").block(block);
+        let body = Paragraph::new("  至少需要 2 个模型才能对比。").block(block);
         frame.render_widget(body, area);
         return;
     }
@@ -1274,9 +1269,9 @@ fn draw_multi_compare(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors
     }
 
     let scroll_info = if models.len() > max_visible {
-        format!(" Compare ({}/{})  ←/→ scroll ", models.len(), models.len())
+        format!(" 对比 ({}/{})  ←/→ 滚动 ", models.len(), models.len())
     } else {
-        format!(" Compare ({} models) ", models.len())
+        format!(" 对比 ({} 个模型) ", models.len())
     };
 
     let table = Table::new(table_rows, widths).header(header).block(
@@ -1308,7 +1303,7 @@ fn draw_detail(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
         None => {
             let block = Block::default()
                 .borders(Borders::ALL)
-                .title(" No model selected ");
+                .title(" 未选择模型 ");
             frame.render_widget(block, area);
             return;
         }
@@ -1319,51 +1314,51 @@ fn draw_detail(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
     let mut lines = vec![
         Line::from(""),
         Line::from(vec![
-            Span::styled("  Model:       ", Style::default().fg(tc.muted)),
+            Span::styled("  模型:        ", Style::default().fg(tc.muted)),
             Span::styled(&fit.model.name, Style::default().fg(tc.fg).bold()),
         ]),
         Line::from(vec![
-            Span::styled("  Provider:    ", Style::default().fg(tc.muted)),
+            Span::styled("  提供商:      ", Style::default().fg(tc.muted)),
             Span::styled(&fit.model.provider, Style::default().fg(tc.fg)),
         ]),
         Line::from(vec![
-            Span::styled("  Parameters:  ", Style::default().fg(tc.muted)),
+            Span::styled("  参数:        ", Style::default().fg(tc.muted)),
             Span::styled(&fit.model.parameter_count, Style::default().fg(tc.fg)),
         ]),
         Line::from(vec![
-            Span::styled("  Quantization:", Style::default().fg(tc.muted)),
+            Span::styled("  推荐量化:    ", Style::default().fg(tc.muted)),
             Span::styled(
                 format!(" {}", fit.model.quantization),
                 Style::default().fg(tc.fg),
             ),
         ]),
         Line::from(vec![
-            Span::styled("  Best Quant:  ", Style::default().fg(tc.muted)),
+            Span::styled("  最佳量化:    ", Style::default().fg(tc.muted)),
             Span::styled(
-                format!(" {} (for this hardware)", fit.best_quant),
+                format!(" {} (基于当前硬件)", fit.best_quant),
                 Style::default().fg(tc.good),
             ),
         ]),
         Line::from(vec![
-            Span::styled("  Context:     ", Style::default().fg(tc.muted)),
+            Span::styled("  上下文:      ", Style::default().fg(tc.muted)),
             Span::styled(
                 format!("{} tokens", fit.model.context_length),
                 Style::default().fg(tc.fg),
             ),
         ]),
         Line::from(vec![
-            Span::styled("  Use Case:    ", Style::default().fg(tc.muted)),
+            Span::styled("  用途:        ", Style::default().fg(tc.muted)),
             Span::styled(&fit.model.use_case, Style::default().fg(tc.fg)),
         ]),
         Line::from(vec![
-            Span::styled("  Category:    ", Style::default().fg(tc.muted)),
+            Span::styled("  分类:        ", Style::default().fg(tc.muted)),
             Span::styled(fit.use_case.label(), Style::default().fg(tc.accent)),
         ]),
         Line::from(vec![
-            Span::styled("  Capabilities:", Style::default().fg(tc.muted)),
+            Span::styled("  能力:        ", Style::default().fg(tc.muted)),
             Span::styled(
                 if fit.model.capabilities.is_empty() {
-                    " None".to_string()
+                    " 无".to_string()
                 } else {
                     format!(
                         " {}",
@@ -1379,14 +1374,14 @@ fn draw_detail(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
             ),
         ]),
         Line::from(vec![
-            Span::styled("  Released:    ", Style::default().fg(tc.muted)),
+            Span::styled("  发布:        ", Style::default().fg(tc.muted)),
             Span::styled(
-                fit.model.release_date.as_deref().unwrap_or("Unknown"),
+                fit.model.release_date.as_deref().unwrap_or("未知"),
                 Style::default().fg(tc.fg),
             ),
         ]),
         Line::from(vec![
-            Span::styled("  Runtime:     ", Style::default().fg(tc.muted)),
+            Span::styled("  运行时:      ", Style::default().fg(tc.muted)),
             Span::styled(
                 fit.runtime_text(),
                 Style::default().fg(match fit.runtime {
@@ -1396,12 +1391,12 @@ fn draw_detail(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
                 }),
             ),
             Span::styled(
-                format!(" (baseline est. ~{:.1} tok/s)", fit.estimated_tps),
+                format!(" (基准预估 ~{:.1} tok/s)", fit.estimated_tps),
                 Style::default().fg(tc.muted),
             ),
         ]),
         Line::from(vec![
-            Span::styled("  Installed:   ", Style::default().fg(tc.muted)),
+            Span::styled("  已安装:      ", Style::default().fg(tc.muted)),
             {
                 let ollama_installed =
                     providers::is_model_installed(&fit.model.name, &app.ollama_installed);
@@ -1432,9 +1427,9 @@ fn draw_detail(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
                 } else if llamacpp_installed {
                     Span::styled("✓ llama.cpp", Style::default().fg(tc.good).bold())
                 } else if any_available {
-                    Span::styled("✗ No  (press d to pull)", Style::default().fg(tc.muted))
+                    Span::styled("✗ 否  (按 d 下载)", Style::default().fg(tc.muted))
                 } else {
-                    Span::styled("- No runtime detected", Style::default().fg(tc.muted))
+                    Span::styled("- 未检测到运行时", Style::default().fg(tc.muted))
                 }
             },
         ]),
@@ -1451,41 +1446,41 @@ fn draw_detail(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
     lines.extend_from_slice(&[
         Line::from(""),
         Line::from(Span::styled(
-            "  ── Score Breakdown ──",
+            "  ── 评分细则 ──",
             Style::default().fg(tc.accent),
         )),
         Line::from(""),
         Line::from(vec![
-            Span::styled("  Overall:     ", Style::default().fg(tc.muted)),
+            Span::styled("  总分:        ", Style::default().fg(tc.muted)),
             Span::styled(
                 format!("{:.1} / 100", fit.score),
                 Style::default().fg(score_color).bold(),
             ),
         ]),
         Line::from(vec![
-            Span::styled("  Quality:     ", Style::default().fg(tc.muted)),
+            Span::styled("  质量:        ", Style::default().fg(tc.muted)),
             Span::styled(
                 format!("{:.0}", fit.score_components.quality),
                 Style::default().fg(tc.fg),
             ),
-            Span::styled("  Speed: ", Style::default().fg(tc.muted)),
+            Span::styled("  速度: ", Style::default().fg(tc.muted)),
             Span::styled(
                 format!("{:.0}", fit.score_components.speed),
                 Style::default().fg(tc.fg),
             ),
-            Span::styled("  Fit: ", Style::default().fg(tc.muted)),
+            Span::styled("  匹配: ", Style::default().fg(tc.muted)),
             Span::styled(
                 format!("{:.0}", fit.score_components.fit),
                 Style::default().fg(tc.fg),
             ),
-            Span::styled("  Context: ", Style::default().fg(tc.muted)),
+            Span::styled("  上下文: ", Style::default().fg(tc.muted)),
             Span::styled(
                 format!("{:.0}", fit.score_components.context),
                 Style::default().fg(tc.fg),
             ),
         ]),
         Line::from(vec![
-            Span::styled("  Baseline Est:", Style::default().fg(tc.muted)),
+            Span::styled("  基准预估:    ", Style::default().fg(tc.muted)),
             Span::styled(
                 format!("{:.1} tok/s", fit.estimated_tps),
                 Style::default().fg(tc.fg),
@@ -1497,7 +1492,7 @@ fn draw_detail(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
     if fit.model.is_moe {
         lines.push(Line::from(""));
         lines.push(Line::from(Span::styled(
-            "  ── MoE Architecture ──",
+            "  ── MoE 架构 ──",
             Style::default().fg(tc.accent),
         )));
         lines.push(Line::from(""));
@@ -1506,10 +1501,10 @@ fn draw_detail(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
             (fit.model.num_experts, fit.model.active_experts)
         {
             lines.push(Line::from(vec![
-                Span::styled("  Experts:     ", Style::default().fg(tc.muted)),
+                Span::styled("  专家网络:    ", Style::default().fg(tc.muted)),
                 Span::styled(
                     format!(
-                        "{} active / {} total per token",
+                        "{} 激活 / {} 总共 (每 token)",
                         active_experts, num_experts
                     ),
                     Style::default().fg(tc.accent),
@@ -1519,14 +1514,14 @@ fn draw_detail(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
 
         if let Some(active_vram) = fit.model.moe_active_vram_gb() {
             lines.push(Line::from(vec![
-                Span::styled("  Active VRAM: ", Style::default().fg(tc.muted)),
+                Span::styled("  激活显存:    ", Style::default().fg(tc.muted)),
                 Span::styled(
                     format!("{:.1} GB", active_vram),
                     Style::default().fg(tc.accent),
                 ),
                 Span::styled(
                     format!(
-                        "  (vs {:.1} GB full model)",
+                        "  (对比 {:.1} GB 完整模型)",
                         fit.model.min_vram_gb.unwrap_or(0.0)
                     ),
                     Style::default().fg(tc.muted),
@@ -1536,9 +1531,9 @@ fn draw_detail(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
 
         if let Some(offloaded) = fit.moe_offloaded_gb {
             lines.push(Line::from(vec![
-                Span::styled("  Offloaded:   ", Style::default().fg(tc.muted)),
+                Span::styled("  卸载内存:    ", Style::default().fg(tc.muted)),
                 Span::styled(
-                    format!("{:.1} GB inactive experts in RAM", offloaded),
+                    format!("{:.1} GB 未激活专家存放于内存", offloaded),
                     Style::default().fg(tc.warning),
                 ),
             ]));
@@ -1546,17 +1541,17 @@ fn draw_detail(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
 
         if fit.run_mode == llmfit_core::fit::RunMode::MoeOffload {
             lines.push(Line::from(vec![
-                Span::styled("  Strategy:    ", Style::default().fg(tc.muted)),
+                Span::styled("  执行策略:    ", Style::default().fg(tc.muted)),
                 Span::styled(
-                    "Expert offloading (active in VRAM, inactive in RAM)",
+                    "专家卸载 (激活的在显存，未激活的在内存)",
                     Style::default().fg(tc.good),
                 ),
             ]));
         } else if fit.run_mode == llmfit_core::fit::RunMode::Gpu {
             lines.push(Line::from(vec![
-                Span::styled("  Strategy:    ", Style::default().fg(tc.muted)),
+                Span::styled("  执行策略:    ", Style::default().fg(tc.muted)),
                 Span::styled(
-                    "All experts loaded in VRAM (optimal)",
+                    "所有专家加载到显存 (最优)",
                     Style::default().fg(tc.good),
                 ),
             ]));
@@ -1566,24 +1561,24 @@ fn draw_detail(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
     lines.extend_from_slice(&[
         Line::from(""),
         Line::from(Span::styled(
-            "  ── System Fit ──",
+            "  ── 系统匹配 ──",
             Style::default().fg(tc.accent),
         )),
         Line::from(""),
         Line::from(vec![
-            Span::styled("  Fit Level:   ", Style::default().fg(tc.muted)),
+            Span::styled("  匹配程度:    ", Style::default().fg(tc.muted)),
             Span::styled(
                 format!("{} {}", fit_indicator(fit.fit_level), fit.fit_text()),
                 Style::default().fg(color).bold(),
             ),
         ]),
         Line::from(vec![
-            Span::styled("  Run Mode:    ", Style::default().fg(tc.muted)),
+            Span::styled("  运行模式:    ", Style::default().fg(tc.muted)),
             Span::styled(fit.run_mode_text(), Style::default().fg(tc.fg).bold()),
         ]),
         Line::from(""),
         Line::from(Span::styled(
-            "  -- Memory --",
+            "  -- 内存信息 --",
             Style::default().fg(tc.accent),
         )),
         Line::from(""),
@@ -1654,7 +1649,7 @@ fn draw_detail(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
 
     if !fit.model.gguf_sources.is_empty() {
         right_lines.push(Line::from(Span::styled(
-            "  ── GGUF Downloads ──",
+            "  ── GGUF 下载 ──",
             Style::default().fg(tc.accent),
         )));
         right_lines.push(Line::from(""));
@@ -1685,7 +1680,7 @@ fn draw_detail(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
 
     if !fit.notes.is_empty() {
         right_lines.push(Line::from(Span::styled(
-            "  ── Notes ──",
+            "  ── 备注 ──",
             Style::default().fg(tc.accent),
         )));
         right_lines.push(Line::from(""));
@@ -1721,9 +1716,9 @@ fn draw_detail(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
         frame.render_widget(left_paragraph, h_layout[0]);
 
         let right_title = if !fit.model.gguf_sources.is_empty() {
-            " 📦 Downloads & Notes "
+            " 📦 下载与备注 "
         } else {
-            " Notes "
+            " 备注 "
         };
         let right_block = Block::default()
             .borders(Borders::ALL)
@@ -1752,9 +1747,9 @@ fn draw_detail(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
 
     if app.input_mode == InputMode::Plan {
         let (row_offset, label_len) = match app.plan_field {
-            PlanField::Context => (5u16, "  Context:    ".len() as u16),
-            PlanField::Quant => (6u16, "  Quant:      ".len() as u16),
-            PlanField::TargetTps => (7u16, "  Target TPS: ".len() as u16),
+            PlanField::Context => (5u16, 14),
+            PlanField::Quant => (6u16, 14),
+            PlanField::TargetTps => (7u16, 14),
         };
         let x = left_area.x + 1 + label_len + app.plan_cursor_position as u16;
         let y = left_area.y + 1 + row_offset;
@@ -1771,7 +1766,7 @@ fn draw_plan(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
         let block = Block::default()
             .borders(Borders::ALL)
             .border_style(Style::default().fg(tc.border))
-            .title(" Planner ");
+            .title(" 规划器 ");
         frame.render_widget(block, area);
         return;
     };
@@ -1789,26 +1784,26 @@ fn draw_plan(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
     let mut lines = vec![
         Line::from(""),
         Line::from(vec![
-            Span::styled("  Model: ", Style::default().fg(tc.muted)),
+            Span::styled("  模型:       ", Style::default().fg(tc.muted)),
             Span::styled(model_name, Style::default().fg(tc.fg).bold()),
         ]),
         Line::from(vec![
-            Span::styled("  Note: ", Style::default().fg(tc.muted)),
+            Span::styled("  备注:       ", Style::default().fg(tc.muted)),
             Span::styled(
-                "Estimate-based using current llmfit fit/speed heuristics.",
+                "基于当前 llmfit 匹配度/速度启发式算法进行估算。",
                 Style::default().fg(tc.warning),
             ),
         ]),
         Line::from(""),
         Line::from(Span::styled(
-            "  Inputs (editable)",
+            "  输入项 (可编辑)",
             Style::default().fg(tc.accent),
         )),
         Line::from(vec![
-            Span::styled("  Context:    ", Style::default().fg(tc.muted)),
+            Span::styled("  上下文:     ", Style::default().fg(tc.muted)),
             Span::styled(
                 if app.plan_context_input.is_empty() {
-                    "<required>"
+                    "<必填>"
                 } else {
                     app.plan_context_input.as_str()
                 },
@@ -1817,10 +1812,10 @@ fn draw_plan(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
             Span::styled(" tokens", Style::default().fg(tc.muted)),
         ]),
         Line::from(vec![
-            Span::styled("  Quant:      ", Style::default().fg(tc.muted)),
+            Span::styled("  量化:       ", Style::default().fg(tc.muted)),
             Span::styled(
                 if app.plan_quant_input.is_empty() {
-                    "<auto>"
+                    "<自动>"
                 } else {
                     app.plan_quant_input.as_str()
                 },
@@ -1828,10 +1823,10 @@ fn draw_plan(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
             ),
         ]),
         Line::from(vec![
-            Span::styled("  Target TPS: ", Style::default().fg(tc.muted)),
+            Span::styled("  目标 TPS:   ", Style::default().fg(tc.muted)),
             Span::styled(
                 if app.plan_target_tps_input.is_empty() {
-                    "<none>"
+                    "<无>"
                 } else {
                     app.plan_target_tps_input.as_str()
                 },
@@ -1853,59 +1848,59 @@ fn draw_plan(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
             Style::default().fg(tc.accent),
         )));
         lines.push(Line::from(vec![
-            Span::styled("  VRAM: ", Style::default().fg(tc.muted)),
+            Span::styled("  显存: ", Style::default().fg(tc.muted)),
             Span::styled(
                 plan.minimum
                     .vram_gb
                     .map(|v| format!("{v:.1} GB"))
-                    .unwrap_or_else(|| "n/a".to_string()),
+                    .unwrap_or_else(|| "无".to_string()),
                 Style::default().fg(tc.fg),
             ),
-            Span::styled("   RAM: ", Style::default().fg(tc.muted)),
+            Span::styled("   内存: ", Style::default().fg(tc.muted)),
             Span::styled(
                 format!("{:.1} GB", plan.minimum.ram_gb),
                 Style::default().fg(tc.fg),
             ),
             Span::styled("   CPU: ", Style::default().fg(tc.muted)),
             Span::styled(
-                format!("{} cores", plan.minimum.cpu_cores),
+                format!("{} 核", plan.minimum.cpu_cores),
                 Style::default().fg(tc.fg),
             ),
         ]));
         lines.push(Line::from(" "));
         lines.push(Line::from(Span::styled(
-            "  Recommended Hardware",
+            "  推荐硬件配置",
             Style::default().fg(tc.accent),
         )));
         lines.push(Line::from(vec![
-            Span::styled("  VRAM: ", Style::default().fg(tc.muted)),
+            Span::styled("  显存: ", Style::default().fg(tc.muted)),
             Span::styled(
                 plan.recommended
                     .vram_gb
                     .map(|v| format!("{v:.1} GB"))
-                    .unwrap_or_else(|| "n/a".to_string()),
+                    .unwrap_or_else(|| "无".to_string()),
                 Style::default().fg(tc.fg),
             ),
-            Span::styled("   RAM: ", Style::default().fg(tc.muted)),
+            Span::styled("   内存: ", Style::default().fg(tc.muted)),
             Span::styled(
                 format!("{:.1} GB", plan.recommended.ram_gb),
                 Style::default().fg(tc.fg),
             ),
             Span::styled("   CPU: ", Style::default().fg(tc.muted)),
             Span::styled(
-                format!("{} cores", plan.recommended.cpu_cores),
+                format!("{} 核", plan.recommended.cpu_cores),
                 Style::default().fg(tc.fg),
             ),
         ]));
         lines.push(Line::from(" "));
         lines.push(Line::from(Span::styled(
-            "  Run Paths",
+            "  运行路径",
             Style::default().fg(tc.accent),
         )));
 
         for path in &plan.run_paths {
             let path_color = if path.feasible { tc.good } else { tc.error };
-            let status = if path.feasible { "yes" } else { "no" };
+            let status = if path.feasible { "是" } else { "否" };
             lines.push(Line::from(vec![
                 Span::styled("  - ", Style::default().fg(tc.muted)),
                 Span::styled(path.path.label(), Style::default().fg(tc.fg).bold()),
@@ -1918,14 +1913,14 @@ fn draw_plan(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
                         .unwrap_or_else(|| "-".to_string()),
                     Style::default().fg(tc.fg),
                 ),
-                Span::styled("  fit=", Style::default().fg(tc.muted)),
+                Span::styled("  匹配=", Style::default().fg(tc.muted)),
                 Span::styled(
                     path.fit_level
                         .map(|f| match f {
-                            FitLevel::Perfect => "Perfect",
-                            FitLevel::Good => "Good",
-                            FitLevel::Marginal => "Marginal",
-                            FitLevel::TooTight => "Too Tight",
+                            FitLevel::Perfect => "完美",
+                            FitLevel::Good => "良好",
+                            FitLevel::Marginal => "勉强",
+                            FitLevel::TooTight => "内存不足",
                         })
                         .unwrap_or("-"),
                     Style::default().fg(path_color),
@@ -1935,12 +1930,12 @@ fn draw_plan(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
 
         lines.push(Line::from(" "));
         lines.push(Line::from(Span::styled(
-            "  Upgrade Deltas",
+            "  升级建议",
             Style::default().fg(tc.accent),
         )));
         if plan.upgrade_deltas.is_empty() {
             lines.push(Line::from(Span::styled(
-                "  - none required",
+                "  - 无需升级硬件",
                 Style::default().fg(tc.good),
             )));
         } else {
@@ -1956,7 +1951,7 @@ fn draw_plan(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
     let block = Block::default()
         .borders(Borders::ALL)
         .border_style(Style::default().fg(tc.border))
-        .title(format!(" Plan: {} ", model_name))
+        .title(format!(" 规划: {} ", model_name))
         .title_style(Style::default().fg(tc.fg).bold());
 
     let paragraph = Paragraph::new(lines)
@@ -2024,7 +2019,7 @@ fn draw_provider_popup(frame: &mut Frame, app: &App, tc: &ThemeColors) {
         .collect();
 
     let active_count = app.selected_providers.iter().filter(|&&s| s).count();
-    let title = format!(" Providers ({}/{}) ", active_count, total);
+    let title = format!(" 提供商 ({}/{}) ", active_count, total);
 
     let block = Block::default()
         .borders(Borders::ALL)
@@ -2107,7 +2102,7 @@ fn draw_use_case_popup(frame: &mut Frame, app: &App, tc: &ThemeColors) {
         .collect();
 
     let active_count = app.selected_use_cases.iter().filter(|&&s| s).count();
-    let title = format!(" Use Cases ({}/{}) ", active_count, total);
+    let title = format!(" 用途 ({}/{}) ", active_count, total);
 
     let block = Block::default()
         .borders(Borders::ALL)
@@ -2190,7 +2185,7 @@ fn draw_capability_popup(frame: &mut Frame, app: &App, tc: &ThemeColors) {
         .collect();
 
     let active_count = app.selected_capabilities.iter().filter(|&&s| s).count();
-    let title = format!(" Capabilities ({}/{}) ", active_count, total);
+    let title = format!(" 能力 ({}/{}) ", active_count, total);
 
     let block = Block::default()
         .borders(Borders::ALL)
@@ -2220,7 +2215,7 @@ fn draw_download_provider_popup(frame: &mut Frame, app: &App, tc: &ThemeColors) 
     let mut lines = Vec::new();
     if let Some(name) = &app.download_provider_model {
         lines.push(Line::from(Span::styled(
-            format!(" Model: {}", name),
+            format!(" 模型: {}", name),
             Style::default().fg(tc.muted),
         )));
         lines.push(Line::from(""));
@@ -2250,7 +2245,7 @@ fn draw_download_provider_popup(frame: &mut Frame, app: &App, tc: &ThemeColors) 
     let block = Block::default()
         .borders(Borders::ALL)
         .border_style(Style::default().fg(tc.accent_secondary))
-        .title(" Download With ")
+        .title(" 下载方式 ")
         .title_style(
             Style::default()
                 .fg(tc.accent_secondary)
@@ -2266,91 +2261,91 @@ fn status_keys_and_mode(app: &App) -> (String, String) {
         InputMode::Normal => {
             if app.show_multi_compare {
                 return (
-                    " ←/→/hl:scroll  q/Esc:close".to_string(),
-                    "COMPARE".to_string(),
+                    " ←/→/hl:滚动  q/Esc:关闭".to_string(),
+                    "对比".to_string(),
                 );
             }
             let detail_key = if app.show_detail {
-                "Enter:table"
+                "Enter:表格"
             } else {
-                "Enter:detail"
+                "Enter:详情"
             };
             let any_provider = app.ollama_available || app.mlx_available || app.llamacpp_available;
             let ollama_keys = if any_provider {
                 let installed_key = if app.installed_first {
-                    "i:all"
+                    "i:全部"
                 } else {
-                    "i:installed↑"
+                    "i:已安装↑"
                 };
-                format!("  {}  d:pull  r:refresh", installed_key)
+                format!("  {}  d:下载  r:刷新", installed_key)
             } else {
                 String::new()
             };
             (
                 format!(
-                    " ↑↓/jk:nav  {}  /:search  f:fit  s:sort  v:visual  V:select  t:theme  p:plan  m:mark  c:compare  x:clear mark{}  P:providers  U:use cases  C:caps  q:quit  tok/s*:est",
+                    " ↑↓/jk:导航  {}  /:搜索  f:匹配屏  s:排序  v:选中模式  V:单列过滤  t:主题  p:规划  m:标记  c:对比  x:清除标记{}  P:提供商  U:用途  C:能力  q:退出  tok/s*:预估",
                     detail_key, ollama_keys,
                 ),
-                "NORMAL".to_string(),
+                "常规".to_string(),
             )
         }
         InputMode::Visual => {
             let count = app.visual_selection_count();
             (
                 format!(
-                    " ↑↓/jk:extend  c:compare  m:mark  Esc:exit  ({} selected)",
+                    " ↑↓/jk:扩展选区  c:对比选区  m:标记  Esc:退出  (已选 {})",
                     count
                 ),
-                "VISUAL".to_string(),
+                "多选".to_string(),
             )
         }
         InputMode::Select => {
             let header_names = [
-                "", "Inst", "Model", "Provider", "Params", "Score", "tok/s*", "Quant", "Mode",
-                "Mem %", "Ctx", "Date", "Fit", "Use Case",
+                "", "安装", "模型", "提供商", "参数", "评分", "tok/s*", "量化", "模式",
+                "内存 %", "上下文", "日期", "匹配", "用途",
             ];
             let col_name = header_names.get(app.select_column).unwrap_or(&"");
             (
-                format!(" ←/→:column  ↑↓:nav  Enter:filter [{}]  Esc:exit", col_name),
-                "SELECT".to_string(),
+                format!(" ←/→:选择列  ↑↓:导航  Enter:过滤列 [{}]  Esc:退出", col_name),
+                "单列过滤".to_string(),
             )
         }
         InputMode::Search => (
-            "  Type to search  Esc:done  Ctrl-U:clear".to_string(),
-            "SEARCH".to_string(),
+            "  输入搜索词  Esc:完成  Ctrl-U:清空".to_string(),
+            "搜索".to_string(),
         ),
         InputMode::Plan => (
-            "  Tab/jk:field  ←/→:cursor  type:edit  Backspace/Delete  Ctrl-U:clear  Esc:close"
+            "  Tab/jk:切换字段  ←/→:光标  字符:编辑  Backspace/Delete:删除  Ctrl-U:清空  Esc:退出"
                 .to_string(),
-            "PLAN".to_string(),
+            "规划".to_string(),
         ),
         InputMode::ProviderPopup => (
-            "  ↑↓/jk:navigate  Space:toggle  a:all/none  Esc:close".to_string(),
-            "PROVIDERS".to_string(),
+            "  ↑↓/jk:导航  Space:勾选  a:全选/反选  Esc:离开".to_string(),
+            "提供商过滤".to_string(),
         ),
         InputMode::UseCasePopup => (
-            "  ↑↓/jk:navigate  Space:toggle  a:all/none  Esc:close".to_string(),
-            "USE CASES".to_string(),
+            "  ↑↓/jk:导航  Space:勾选  a:全选/反选  Esc:离开".to_string(),
+            "用途过滤".to_string(),
         ),
         InputMode::CapabilityPopup => (
-            "  ↑↓/jk:navigate  Space:toggle  a:all/none  Esc:close".to_string(),
-            "CAPABILITIES".to_string(),
+            "  ↑↓/jk:导航  Space:勾选  a:全选/反选  Esc:离开".to_string(),
+            "能力过滤".to_string(),
         ),
         InputMode::DownloadProviderPopup => (
-            "  ↑↓/jk:choose  Enter:download  Esc:cancel".to_string(),
-            "DOWNLOAD".to_string(),
+            "  ↑↓/jk:选择  Enter:开始下载  Esc:取消".to_string(),
+            "选择下载".to_string(),
         ),
         InputMode::QuantPopup => (
-            "  ↑↓/jk:navigate  Space:toggle  a:all/none  Esc:close".to_string(),
-            "QUANT".to_string(),
+            "  ↑↓/jk:导航  Space:勾选  a:全选/反选  Esc:离开".to_string(),
+            "量化过滤".to_string(),
         ),
         InputMode::RunModePopup => (
-            "  ↑↓/jk:navigate  Space:toggle  a:all/none  Esc:close".to_string(),
-            "RUN MODE".to_string(),
+            "  ↑↓/jk:导航  Space:勾选  a:全选/反选  Esc:离开".to_string(),
+            "模式过滤".to_string(),
         ),
         InputMode::ParamsBucketPopup => (
-            "  ↑↓/jk:navigate  Space:toggle  a:all/none  Esc:close".to_string(),
-            "PARAMS".to_string(),
+            "  ↑↓/jk:导航  Space:勾选  a:全选/反选  Esc:离开".to_string(),
+            "参数过滤".to_string(),
         ),
     }
 }
@@ -2464,7 +2459,7 @@ fn draw_quant_popup(frame: &mut Frame, app: &App, tc: &ThemeColors) {
         .collect();
 
     let active_count = app.selected_quants.iter().filter(|&&s| s).count();
-    let title = format!(" Quant ({}/{}) ", active_count, total);
+    let title = format!(" 量化等级 ({}/{}) ", active_count, total);
 
     let block = Block::default()
         .borders(Borders::ALL)
@@ -2539,7 +2534,7 @@ fn draw_run_mode_popup(frame: &mut Frame, app: &App, tc: &ThemeColors) {
         .collect();
 
     let active_count = app.selected_run_modes.iter().filter(|&&s| s).count();
-    let title = format!(" Run Mode ({}/{}) ", active_count, total);
+    let title = format!(" 运行模式 ({}/{}) ", active_count, total);
 
     let block = Block::default()
         .borders(Borders::ALL)
@@ -2619,7 +2614,7 @@ fn draw_params_bucket_popup(frame: &mut Frame, app: &App, tc: &ThemeColors) {
         .collect();
 
     let active_count = app.selected_params_buckets.iter().filter(|&&s| s).count();
-    let title = format!(" Params ({}/{}) ", active_count, total);
+    let title = format!(" 参数规模 ({}/{}) ", active_count, total);
 
     let block = Block::default()
         .borders(Borders::ALL)

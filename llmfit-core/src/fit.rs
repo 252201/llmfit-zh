@@ -35,13 +35,13 @@ pub enum SortColumn {
 impl SortColumn {
     pub fn label(&self) -> &str {
         match self {
-            SortColumn::Score => "Score",
+            SortColumn::Score => "评分",
             SortColumn::Tps => "tok/s",
-            SortColumn::Params => "Params",
-            SortColumn::MemPct => "Mem%",
-            SortColumn::Ctx => "Ctx",
-            SortColumn::ReleaseDate => "Date",
-            SortColumn::UseCase => "Use",
+            SortColumn::Params => "参数",
+            SortColumn::MemPct => "显存%",
+            SortColumn::Ctx => "上下文",
+            SortColumn::ReleaseDate => "日期",
+            SortColumn::UseCase => "用途",
         }
     }
 
@@ -350,10 +350,10 @@ impl ModelFit {
 
     pub fn fit_text(&self) -> &str {
         match self.fit_level {
-            FitLevel::Perfect => "Perfect",
-            FitLevel::Good => "Good",
-            FitLevel::Marginal => "Marginal",
-            FitLevel::TooTight => "Too Tight",
+            FitLevel::Perfect => "完美",
+            FitLevel::Good => "良好",
+            FitLevel::Marginal => "勉强",
+            FitLevel::TooTight => "内存不足",
         }
     }
 

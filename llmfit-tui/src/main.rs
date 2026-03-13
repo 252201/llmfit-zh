@@ -639,9 +639,8 @@ fn run_fit(
     } else {
         if hidden > 0 {
             eprintln!(
-                "({} model{} hidden — incompatible backend)",
-                hidden,
-                if hidden == 1 { "" } else { "s" }
+                "({} 个模型被隐藏 — 不兼容当前的推理后端)",
+                hidden
             );
         }
         display::display_model_fits(&fits);
@@ -686,7 +685,7 @@ fn find_fit_index_by_selector(fits: &[ModelFit], selector: &str) -> Result<usize
         .collect();
 
     match matches.as_slice() {
-        [] => Err(format!("No model found matching '{}'", selector)),
+        [] => Err(format!("未找到匹配 '{}' 的模型", selector)),
         [(idx, _)] => Ok(*idx),
         _ => {
             let names = matches
@@ -696,7 +695,7 @@ fn find_fit_index_by_selector(fits: &[ModelFit], selector: &str) -> Result<usize
                 .collect::<Vec<_>>()
                 .join("\n");
             Err(format!(
-                "Multiple models match '{}'. Please be more specific:\n{}",
+                "找到多个匹配 '{}' 的模型。请提供更具体的名称:\n{}",
                 selector, names
             ))
         }
@@ -714,12 +713,12 @@ fn run_diff(
     context_limit: Option<u32>,
 ) {
     if limit < 2 {
-        eprintln!("Error: --limit must be at least 2 for diff");
+        eprintln!("错误: 对比模式下的 --limit 至少为 2");
         std::process::exit(1);
     }
 
     if (model_a.is_some() && model_b.is_none()) || (model_a.is_none() && model_b.is_some()) {
-        eprintln!("Error: provide both model selectors, or neither to auto-compare top N");
+        eprintln!("错误: 必须同时提供两个模型名称进行对比，或者不提供名称以自动对比排名前 N 的模型");
         std::process::exit(1);
     }
 
@@ -754,14 +753,14 @@ fn run_diff(
             };
 
             if a_idx == b_idx {
-                eprintln!("Error: both selectors resolved to the same model");
+                eprintln!("错误: 两个输入名称解析到了相同的模型");
                 std::process::exit(1);
             }
 
             vec![fits[a_idx].clone(), fits[b_idx].clone()]
         } else {
             if fits.len() < 2 {
-                eprintln!("Error: need at least 2 models after filtering to compare");
+                eprintln!("错误: 过滤后的可用模型少于2个，无法进行对比。");
                 std::process::exit(1);
             }
             fits.into_iter().take(limit).collect()
@@ -787,11 +786,11 @@ fn run_tui(memory_override: &Option<String>, context_limit: Option<u32>) -> std:
 
     let backend = ratatui::backend::CrosstermBackend::new(stdout);
     let mut terminal = ratatui::Terminal::new(backend)?;
-    draw_boot_screen(&mut terminal, "Detecting system hardware...")?;
+    draw_boot_screen(&mut terminal, "正在检测系统硬件...")?;
 
     // Create app state
     let specs = detect_specs(memory_override);
-    draw_boot_screen(&mut terminal, "Loading providers and models...")?;
+    draw_boot_screen(&mut terminal, "正在加载提供商与模型...")?;
     let mut app = tui_app::App::with_specs_and_context(specs, context_limit);
 
     // Main loop
@@ -845,7 +844,7 @@ fn draw_boot_screen(
             .title_style(Style::default().add_modifier(Modifier::BOLD));
         let line = Line::from(vec![
             Span::raw(" "),
-            Span::styled("Loading: ", Style::default().add_modifier(Modifier::BOLD)),
+            Span::styled("加载中: ", Style::default().add_modifier(Modifier::BOLD)),
             Span::raw(message),
         ]);
         frame.render_widget(Paragraph::new(line).block(block), layout[1]);
@@ -976,40 +975,40 @@ fn run_download(
     } else {
         // Search HuggingFace
         println!(
-            "Searching HuggingFace for GGUF models matching '{}'...",
+            "正在 HuggingFace 搜索匹配 '{}' 的 GGUF 模型...",
             model
         );
         let results = LlamaCppProvider::search_hf_gguf(model);
         if results.is_empty() {
             eprintln!(
-                "No GGUF models found for '{}'. Try a different search term.",
+                "未找到与 '{}' 匹配的 GGUF 模型。请尝试其他搜索词。",
                 model
             );
-            eprintln!("Tip: use 'llmfit hf-search <query>' to browse available models.");
+            eprintln!("提示: 使用 'llmfit hf-search <query>' 浏览可用模型。");
             std::process::exit(1);
         }
         if results.len() > 1 && !list_only {
-            println!("\nFound {} repositories:", results.len());
+            println!("\n找到 {} 个仓库:", results.len());
             for (i, (id, desc)) in results.iter().enumerate().take(10) {
                 println!("  {}. {} ({})", i + 1, id, desc);
             }
-            println!("\nUsing first result: {}", results[0].0);
+            println!("\n使用首个匹配结果: {}", results[0].0);
         }
         results[0].0.clone()
     };
 
     // List available GGUF files
-    println!("Fetching available files from {}...", repo_id);
+    println!("正在获取 {} 中的可用文件...", repo_id);
     let files = LlamaCppProvider::list_repo_gguf_files(&repo_id);
     if files.is_empty() {
-        eprintln!("No GGUF files found in repository '{}'.", repo_id);
-        eprintln!("Make sure this is a valid GGUF repository on HuggingFace.");
+        eprintln!("仓库 '{}' 中未找到 GGUF 文件。", repo_id);
+        eprintln!("请确保这是一个 HuggingFace 上的有效 GGUF 仓库。");
         std::process::exit(1);
     }
 
     if list_only {
-        println!("\nAvailable GGUF files in {}:", repo_id);
-        println!("{:<60} {:>10}", "Filename", "Size");
+        println!("\n{} 中的可用 GGUF 文件:", repo_id);
+        println!("{:<60} {:>10}", "文件名", "大小");
         println!("{}", "-".repeat(72));
         for (filename, size) in &files {
             let size_str = if *size > 1_073_741_824 {
@@ -1033,10 +1032,10 @@ fn run_download(
             (f.clone(), *s)
         } else {
             eprintln!(
-                "No GGUF file found matching quantization '{}' in {}.",
-                q, repo_id
+                "在 {} 中未找到匹配量化级别 '{}' 的 GGUF 文件。",
+                repo_id, q
             );
-            eprintln!("\nAvailable files:");
+            eprintln!("\n可用文件:");
             for (f, s) in &files {
                 let size_str = format!("{:.1} GB", *s as f64 / 1_073_741_824.0);
                 eprintln!("  {} ({})", f, size_str);
@@ -1056,10 +1055,10 @@ fn run_download(
         };
         if let Some(result) = LlamaCppProvider::select_best_gguf(&files, mem_budget) {
             println!(
-                "Selected {} ({:.1} GB) for {:.0} GB memory budget",
+                "在 {:.0} GB 内存预算下，已选择 {} ({:.1} GB)",
+                mem_budget,
                 result.0,
-                result.1 as f64 / 1_073_741_824.0,
-                mem_budget
+                result.1 as f64 / 1_073_741_824.0
             );
             result
         } else {
@@ -1068,7 +1067,7 @@ fn run_download(
             sorted.sort_by_key(|(_, s)| *s);
             let (f, s) = sorted.first().expect("files list is not empty");
             println!(
-                "Warning: No quantization fits within {:.0} GB. Downloading smallest: {} ({:.1} GB)",
+                "警告: 没有任何量化级别符合 {:.0} GB 容量要求。将下载最小的文件: {} ({:.1} GB)",
                 mem_budget,
                 f,
                 *s as f64 / 1_073_741_824.0
@@ -1078,7 +1077,7 @@ fn run_download(
     };
 
     println!(
-        "\nDownloading {} ({:.1} GB) to {}",
+        "\n正在下载 {} ({:.1} GB) 至 {}",
         filename,
         file_size as f64 / 1_073_741_824.0,
         provider.models_dir().display()
@@ -1099,17 +1098,17 @@ fn run_download(
                         }
                     }
                     Ok(llmfit_core::providers::PullEvent::Done) => {
-                        println!("\n\n✓ Download complete!");
+                        println!("\n\n✓ 下载完成!");
                         let dest = provider.models_dir().join(&filename);
-                        println!("  Saved to: {}", dest.display());
+                        println!("  已保存至: {}", dest.display());
                         if provider.llama_cli_path().is_some() {
                             println!(
-                                "\n  Run with: llmfit run {}",
+                                "\n  使用以下命令运行: llmfit run {}",
                                 filename.trim_end_matches(".gguf")
                             );
-                            println!("  Or directly: llama-cli -m {} -cnv", dest.display());
+                            println!("  或直接运行: llama-cli -m {} -cnv", dest.display());
                         } else {
-                            println!("\n  Install llama.cpp to run this model:");
+                            println!("\n  请安装 llama.cpp 来运行此模型:");
                             println!("    brew install llama.cpp");
                             println!("    # or build from source:");
                             println!(
@@ -1142,24 +1141,24 @@ fn run_hf_search(query: &str, limit: usize) {
     use llmfit_core::providers::LlamaCppProvider;
 
     println!(
-        "Searching HuggingFace for GGUF models matching '{}'...\n",
+        "正在 HuggingFace 搜索匹配 '{}' 的 GGUF 模型...\n",
         query
     );
     let results = LlamaCppProvider::search_hf_gguf(query);
 
     if results.is_empty() {
-        println!("No GGUF models found. Try a different search term.");
+        println!("未找到 GGUF 模型。请尝试其他搜索词。");
         return;
     }
 
-    println!("{:<50} {}", "Repository", "Type");
+    println!("{:<50} {}", "仓库", "类型");
     println!("{}", "-".repeat(65));
     for (id, desc) in results.iter().take(limit) {
         println!("{:<50} {}", id, desc);
     }
 
-    println!("\nTo download: llmfit download <repository>");
-    println!("To list files: llmfit download <repository> --list");
+    println!("\n下载命令: llmfit download <repository>");
+    println!("列出文件: llmfit download <repository> --list");
 }
 
 fn run_model(model: &str, server: bool, port: u16, ngl: i32, ctx_size: u32) {
@@ -1183,12 +1182,12 @@ fn run_model(model: &str, server: bool, port: u16, ngl: i32, ctx_size: u32) {
         match found {
             Some(p) => p,
             None => {
-                eprintln!("Model '{}' not found.", model);
-                eprintln!("\nAvailable models in {}:", provider.models_dir().display());
+                eprintln!("找不到模型 '{}'。", model);
+                eprintln!("\n{} 中的可用模型:", provider.models_dir().display());
                 for f in provider.list_gguf_files() {
                     eprintln!("  {}", f.file_name().unwrap_or_default().to_string_lossy());
                 }
-                eprintln!("\nUse 'llmfit download <model>' to download a model first.");
+                eprintln!("\n请先使用 'llmfit download <model>' 下载模型。");
                 std::process::exit(1);
             }
         }
@@ -1349,15 +1348,15 @@ fn main() {
                 let results = db.find_model(&model);
 
                 if results.is_empty() {
-                    println!("\nNo model found matching '{}'", model);
+                    println!("\n未找到匹配 '{}' 的模型", model);
                     return;
                 }
 
                 if results.len() > 1 {
-                    println!("\nMultiple models found. Please be more specific:");
-                    for m in results {
-                        println!("  - {}", m.name);
-                    }
+                    println!("\n找到多个模型。请提供更具体的名称:");
+                for m in results {
+                    println!("  - {}", m.name);
+                }
                     return;
                 }
 

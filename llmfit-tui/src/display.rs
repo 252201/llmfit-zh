@@ -7,33 +7,33 @@ use tabled::{Table, Tabled, settings::Style};
 
 #[derive(Tabled)]
 struct ModelRow {
-    #[tabled(rename = "Status")]
+    #[tabled(rename = "状态")]
     status: String,
-    #[tabled(rename = "Model")]
+    #[tabled(rename = "模型")]
     name: String,
-    #[tabled(rename = "Provider")]
+    #[tabled(rename = "提供商")]
     provider: String,
-    #[tabled(rename = "Size")]
+    #[tabled(rename = "参数")]
     size: String,
-    #[tabled(rename = "Score")]
+    #[tabled(rename = "评分")]
     score: String,
-    #[tabled(rename = "tok/s est.")]
+    #[tabled(rename = "tok/s 预估")]
     tps: String,
-    #[tabled(rename = "Quant")]
+    #[tabled(rename = "量化")]
     quant: String,
-    #[tabled(rename = "Runtime")]
+    #[tabled(rename = "运行时")]
     runtime: String,
-    #[tabled(rename = "Mode")]
+    #[tabled(rename = "模式")]
     mode: String,
-    #[tabled(rename = "Mem %")]
+    #[tabled(rename = "内存 %")]
     mem_use: String,
-    #[tabled(rename = "Context")]
+    #[tabled(rename = "上下文")]
     context: String,
 }
 
 pub fn display_all_models(models: &[LlmModel]) {
-    println!("\n{}", "=== Available LLM Models ===".bold().cyan());
-    println!("Total models: {}\n", models.len());
+    println!("\n{}", "=== 可用的大模型 ===".bold().cyan());
+    println!("模型总数: {}\n", models.len());
 
     let rows: Vec<ModelRow> = models
         .iter()
@@ -60,13 +60,13 @@ pub fn display_model_fits(fits: &[ModelFit]) {
     if fits.is_empty() {
         println!(
             "\n{}",
-            "No compatible models found for your system.".yellow()
+            "未找到兼容您系统的模型。".yellow()
         );
         return;
     }
 
-    println!("\n{}", "=== Model Compatibility Analysis ===".bold().cyan());
-    println!("Found {} compatible model(s)\n", fits.len());
+    println!("\n{}", "=== 模型兼容性分析 ===".bold().cyan());
+    println!("找到 {} 个兼容的模型\n", fits.len());
 
     let rows: Vec<ModelRow> = fits
         .iter()
@@ -92,80 +92,80 @@ pub fn display_model_fits(fits: &[ModelFit]) {
     let table = Table::new(rows).with(Style::rounded()).to_string();
     println!("{}", table);
     println!(
-        "  Note: tok/s values are baseline estimates; real runtime depends on engine/runtime."
+        "  注: tok/s 速度仅为基准预估；实际运行速度取决于推理引擎与系统负载。"
     );
 }
 
 pub fn display_model_detail(fit: &ModelFit) {
     println!("\n{}", format!("=== {} ===", fit.model.name).bold().cyan());
     println!();
-    println!("{}: {}", "Provider".bold(), fit.model.provider);
-    println!("{}: {}", "Parameters".bold(), fit.model.parameter_count);
-    println!("{}: {}", "Quantization".bold(), fit.model.quantization);
-    println!("{}: {}", "Best Quant".bold(), fit.best_quant);
+    println!("{}: {}", "提供商".bold(), fit.model.provider);
+    println!("{}: {}", "参数规模".bold(), fit.model.parameter_count);
+    println!("{}: {}", "推荐量化".bold(), fit.model.quantization);
+    println!("{}: {}", "最佳量化".bold(), fit.best_quant);
     println!(
         "{}: {} tokens",
-        "Context Length".bold(),
+        "上下文".bold(),
         fit.model.context_length
     );
-    println!("{}: {}", "Use Case".bold(), fit.model.use_case);
-    println!("{}: {}", "Category".bold(), fit.use_case.label());
+    println!("{}: {}", "用途".bold(), fit.model.use_case);
+    println!("{}: {}", "分类".bold(), fit.use_case.label());
     if let Some(ref date) = fit.model.release_date {
-        println!("{}: {}", "Released".bold(), date);
+        println!("{}: {}", "发布时间".bold(), date);
     }
     println!(
-        "{}: {} (baseline est. ~{:.1} tok/s)",
-        "Runtime".bold(),
+        "{}: {} (基准预估 ~{:.1} tok/s)",
+        "运行时".bold(),
         fit.runtime_text(),
         fit.estimated_tps
     );
     println!();
 
-    println!("{}", "Score Breakdown:".bold().underline());
-    println!("  Overall Score: {:.1} / 100", fit.score);
+    println!("{}", "评分细则:".bold().underline());
+    println!("  总分: {:.1} / 100", fit.score);
     println!(
-        "  Quality: {:.0}  Speed: {:.0}  Fit: {:.0}  Context: {:.0}",
+        "  质量: {:.0}  速度: {:.0}  匹配度: {:.0}  上下文: {:.0}",
         fit.score_components.quality,
         fit.score_components.speed,
         fit.score_components.fit,
         fit.score_components.context
     );
-    println!("  Baseline Est. Speed: {:.1} tok/s", fit.estimated_tps);
+    println!("  基准预估速度: {:.1} tok/s", fit.estimated_tps);
     println!();
 
-    println!("{}", "Resource Requirements:".bold().underline());
+    println!("{}", "资源需求:".bold().underline());
     if let Some(vram) = fit.model.min_vram_gb {
-        println!("  Min VRAM: {:.1} GB", vram);
+        println!("  最低显存: {:.1} GB", vram);
     }
-    println!("  Min RAM: {:.1} GB (CPU inference)", fit.model.min_ram_gb);
-    println!("  Recommended RAM: {:.1} GB", fit.model.recommended_ram_gb);
+    println!("  最低内存: {:.1} GB (仅 CPU 推理)", fit.model.min_ram_gb);
+    println!("  推荐内存: {:.1} GB", fit.model.recommended_ram_gb);
 
     // MoE Architecture info
     if fit.model.is_moe {
         println!();
-        println!("{}", "MoE Architecture:".bold().underline());
+        println!("{}", "MoE 架构:".bold().underline());
         if let (Some(num_experts), Some(active_experts)) =
             (fit.model.num_experts, fit.model.active_experts)
         {
             println!(
-                "  Experts: {} active / {} total per token",
+                "  专家网络: {} 激活 / {} 总共 (每 token)",
                 active_experts, num_experts
             );
         }
         if let Some(active_vram) = fit.model.moe_active_vram_gb() {
             println!(
-                "  Active VRAM: {:.1} GB (vs {:.1} GB full model)",
+                "  激活显存: {:.1} GB (对比 {:.1} GB 完整模型)",
                 active_vram,
                 fit.model.min_vram_gb.unwrap_or(0.0)
             );
         }
         if let Some(offloaded) = fit.moe_offloaded_gb {
-            println!("  Offloaded: {:.1} GB inactive experts in RAM", offloaded);
+            println!("  卸载内存: {:.1} GB 未激活专家存放于内存", offloaded);
         }
     }
     println!();
 
-    println!("{}", "Fit Analysis:".bold().underline());
+    println!("{}", "系统匹配分析:".bold().underline());
 
     let fit_color = match fit.fit_level {
         FitLevel::Perfect => "green",
@@ -175,26 +175,26 @@ pub fn display_model_detail(fit: &ModelFit) {
     };
 
     println!(
-        "  Status: {} {}",
+        "  状态: {} {}",
         fit.fit_emoji(),
         fit.fit_text().color(fit_color)
     );
-    println!("  Run Mode: {}", fit.run_mode_text());
+    println!("  运行模式: {}", fit.run_mode_text());
     println!(
-        "  Memory Utilization: {:.1}% ({:.1} / {:.1} GB)",
+        "  内存利用率: {:.1}% ({:.1} / {:.1} GB)",
         fit.utilization_pct, fit.memory_required_gb, fit.memory_available_gb
     );
     println!();
 
     if !fit.model.gguf_sources.is_empty() {
-        println!("{}", "GGUF Downloads:".bold().underline());
+        println!("{}", "GGUF 下载来源:".bold().underline());
         for src in &fit.model.gguf_sources {
             println!("  {} → https://huggingface.co/{}", src.provider, src.repo);
         }
         println!(
             "  {}",
             format!(
-                "Tip: llmfit download {} --quant {}",
+                "提示: llmfit download {} --quant {}",
                 fit.model.gguf_sources[0].repo, fit.best_quant
             )
             .dimmed()
@@ -203,7 +203,7 @@ pub fn display_model_detail(fit: &ModelFit) {
     }
 
     if !fit.notes.is_empty() {
-        println!("{}", "Notes:".bold().underline());
+        println!("{}", "备注:".bold().underline());
         for note in &fit.notes {
             println!("  {}", note);
         }
@@ -213,13 +213,13 @@ pub fn display_model_detail(fit: &ModelFit) {
 
 pub fn display_model_diff(fits: &[ModelFit], sort_label: &str) {
     if fits.len() < 2 {
-        println!("\n{}", "Need at least 2 models to compare.".yellow());
+        println!("\n{}", "需要至少2个模型进行对比。".yellow());
         return;
     }
 
-    println!("\n{}", "=== Model Diff ===".bold().cyan());
+    println!("\n{}", "=== 模型对比分析 ===".bold().cyan());
     println!(
-        "Comparing {} model(s) (sorted by {})\n",
+        "正在对比 {} 个模型 (按 {} 排序)\n",
         fits.len(),
         sort_label
     );
@@ -236,7 +236,7 @@ pub fn display_model_diff(fits: &[ModelFit], sort_label: &str) {
         })
         .collect();
 
-    print!("{:<metric_width$}", "Metric".bold());
+    print!("{:<metric_width$}", "指标".bold());
     for header in &model_headers {
         print!("  {:<col_width$}", header.bold());
     }
@@ -251,7 +251,7 @@ pub fn display_model_diff(fits: &[ModelFit], sort_label: &str) {
     let base = &fits[0];
 
     print_metric_row(
-        "Score",
+        "评分",
         fits.iter()
             .map(|f| format_with_delta(format!("{:.1}", f.score), f.score - base.score))
             .collect(),
@@ -259,7 +259,7 @@ pub fn display_model_diff(fits: &[ModelFit], sort_label: &str) {
         col_width,
     );
     print_metric_row(
-        "Baseline tok/s",
+        "基准预估 tok/s",
         fits.iter()
             .map(|f| {
                 format_with_delta(
@@ -272,7 +272,7 @@ pub fn display_model_diff(fits: &[ModelFit], sort_label: &str) {
         col_width,
     );
     print_metric_row(
-        "Fit",
+        "匹配度",
         fits.iter()
             .map(|f| format!("{} {}", f.fit_emoji(), f.fit_text()))
             .collect(),
@@ -280,19 +280,19 @@ pub fn display_model_diff(fits: &[ModelFit], sort_label: &str) {
         col_width,
     );
     print_metric_row(
-        "Run Mode",
+        "运行模式",
         fits.iter().map(|f| f.run_mode_text().to_string()).collect(),
         metric_width,
         col_width,
     );
     print_metric_row(
-        "Runtime",
+        "运行时",
         fits.iter().map(|f| f.runtime_text().to_string()).collect(),
         metric_width,
         col_width,
     );
     print_metric_row(
-        "Memory %",
+        "内存 %",
         fits.iter()
             .map(|f| {
                 format_with_delta(
@@ -305,7 +305,7 @@ pub fn display_model_diff(fits: &[ModelFit], sort_label: &str) {
         col_width,
     );
     print_metric_row(
-        "Params",
+        "参数规模",
         fits.iter()
             .map(|f| f.model.parameter_count.clone())
             .collect(),
@@ -313,7 +313,7 @@ pub fn display_model_diff(fits: &[ModelFit], sort_label: &str) {
         col_width,
     );
     print_metric_row(
-        "Context",
+        "上下文",
         fits.iter()
             .map(|f| format!("{} tokens", f.model.context_length))
             .collect(),
@@ -321,13 +321,13 @@ pub fn display_model_diff(fits: &[ModelFit], sort_label: &str) {
         col_width,
     );
     print_metric_row(
-        "Best Quant",
+        "最佳量化",
         fits.iter().map(|f| f.best_quant.clone()).collect(),
         metric_width,
         col_width,
     );
     print_metric_row(
-        "Provider",
+        "提供商",
         fits.iter().map(|f| f.model.provider.clone()).collect(),
         metric_width,
         col_width,
@@ -365,18 +365,18 @@ pub fn display_search_results(models: &[&LlmModel], query: &str) {
     if models.is_empty() {
         println!(
             "\n{}",
-            format!("No models found matching '{}'", query).yellow()
+            format!("未找到匹配 '{}' 的模型", query).yellow()
         );
         return;
     }
 
     println!(
         "\n{}",
-        format!("=== Search Results for '{}' ===", query)
+        format!("=== '{}' 的搜索结果 ===", query)
             .bold()
             .cyan()
     );
-    println!("Found {} model(s)\n", models.len());
+    println!("找到 {} 个模型\n", models.len());
 
     let rows: Vec<ModelRow> = models
         .iter()
@@ -515,67 +515,67 @@ fn round2(v: f64) -> f64 {
 }
 
 pub fn display_model_plan(plan: &PlanEstimate) {
-    println!("\n{}", "=== Hardware Planning Estimate ===".bold().cyan());
-    println!("{} {}", "Model:".bold(), plan.model_name);
-    println!("{} {}", "Provider:".bold(), plan.provider);
-    println!("{} {}", "Context:".bold(), plan.context);
-    println!("{} {}", "Quantization:".bold(), plan.quantization);
+    println!("\n{}", "=== 硬件规划预估 ===".bold().cyan());
+    println!("{} {}", "模型:".bold(), plan.model_name);
+    println!("{} {}", "提供商:".bold(), plan.provider);
+    println!("{} {}", "上下文:".bold(), plan.context);
+    println!("{} {}", "量化:".bold(), plan.quantization);
     if let Some(tps) = plan.target_tps {
-        println!("{} {:.1} tok/s", "Target TPS:".bold(), tps);
+        println!("{} {:.1} tok/s", "目标 TPS:".bold(), tps);
     }
-    println!("{} {}", "Note:".bold(), plan.estimate_notice);
+    println!("{} {}", "备注:".bold(), plan.estimate_notice);
     println!();
 
-    println!("{}", "Minimum Hardware:".bold().underline());
+    println!("{}", "最低硬件要求:".bold().underline());
     println!(
-        "  VRAM: {}",
+        "  显存: {}",
         plan.minimum
             .vram_gb
             .map(|v| format!("{v:.1} GB"))
-            .unwrap_or_else(|| "Not required".to_string())
+            .unwrap_or_else(|| "无需配置".to_string())
     );
-    println!("  RAM: {:.1} GB", plan.minimum.ram_gb);
-    println!("  CPU Cores: {}", plan.minimum.cpu_cores);
+    println!("  内存: {:.1} GB", plan.minimum.ram_gb);
+    println!("  CPU 核数: {}", plan.minimum.cpu_cores);
     println!();
 
-    println!("{}", "Recommended Hardware:".bold().underline());
+    println!("{}", "推荐硬件要求:".bold().underline());
     println!(
-        "  VRAM: {}",
+        "  显存: {}",
         plan.recommended
             .vram_gb
             .map(|v| format!("{v:.1} GB"))
-            .unwrap_or_else(|| "Not required".to_string())
+            .unwrap_or_else(|| "无需配置".to_string())
     );
-    println!("  RAM: {:.1} GB", plan.recommended.ram_gb);
-    println!("  CPU Cores: {}", plan.recommended.cpu_cores);
+    println!("  内存: {:.1} GB", plan.recommended.ram_gb);
+    println!("  CPU 核数: {}", plan.recommended.cpu_cores);
     println!();
 
-    println!("{}", "Feasible Run Paths:".bold().underline());
+    println!("{}", "支持的运行路径:".bold().underline());
     for path in &plan.run_paths {
         println!(
             "  {}: {}",
             path.path.label(),
-            if path.feasible { "Yes" } else { "No" }
+            if path.feasible { "支持" } else { "不支持" }
         );
         if let Some(min) = &path.minimum {
             println!(
-                "    min: VRAM={} RAM={:.1} GB cores={}",
+                "    最低要求: 显存={} 内存={:.1} GB 核数={}",
                 min.vram_gb
                     .map(|v| format!("{v:.1} GB"))
-                    .unwrap_or_else(|| "n/a".to_string()),
+                    .unwrap_or_else(|| "无".to_string()),
                 min.ram_gb,
                 min.cpu_cores
             );
         }
         if let Some(tps) = path.estimated_tps {
-            println!("    est speed: {:.1} tok/s", tps);
+            println!("    预估速度: {:.1} tok/s", tps);
         }
     }
     println!();
 
-    println!("{}", "Upgrade Deltas:".bold().underline());
+    println!("{}", "升级建议:".bold().underline());
     if plan.upgrade_deltas.is_empty() {
-        println!("  None required for the selected target.");
+        println!("  为达到当前目标无需升级硬件。");
     } else {
         for delta in &plan.upgrade_deltas {
             println!("  {}", delta.description);

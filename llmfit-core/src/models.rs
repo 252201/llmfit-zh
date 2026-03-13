@@ -96,8 +96,8 @@ pub enum Capability {
 impl Capability {
     pub fn label(&self) -> &'static str {
         match self {
-            Capability::Vision => "Vision",
-            Capability::ToolUse => "Tool Use",
+            Capability::Vision => "视觉",
+            Capability::ToolUse => "工具调用",
         }
     }
 
@@ -182,12 +182,12 @@ pub enum UseCase {
 impl UseCase {
     pub fn label(&self) -> &'static str {
         match self {
-            UseCase::General => "General",
-            UseCase::Coding => "Coding",
-            UseCase::Reasoning => "Reasoning",
-            UseCase::Chat => "Chat",
-            UseCase::Multimodal => "Multimodal",
-            UseCase::Embedding => "Embedding",
+            UseCase::General => "通用",
+            UseCase::Coding => "编程",
+            UseCase::Reasoning => "推理",
+            UseCase::Chat => "聊天",
+            UseCase::Multimodal => "多模态",
+            UseCase::Embedding => "向量",
         }
     }
 
