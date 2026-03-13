@@ -10,13 +10,15 @@
 
 ## 一键安装
 
+由于你之前可能已经安装过英文原版的 `llmfit` 工具，为了防止命令冲突，本次汉化版的安装包名和启动命令都已更改为 **`llmfit-zh`**。
+
 你现在可以通过以下一条命令直接在终端里安装编译好这个汉化版（这需要你的电脑里已安装 [Rust](https://rustup.rs/)）：
 
 ```sh
-cargo install --git https://github.com/252201/llmfit-zh.git llmfit
+cargo install --git https://github.com/252201/llmfit-zh.git llmfit-zh
 ```
 
-安装完成后，直接在终端里输入 `llmfit` 即可启动交互式的汉化版界面。
+安装完成后，直接在终端里输入 `llmfit-zh` 即可启动交互式的汉化版界面。
 
 ---
 
@@ -26,7 +28,7 @@ cargo install --git https://github.com/252201/llmfit-zh.git llmfit
 
 直接在终端输入：
 ```sh
-llmfit
+llmfit-zh
 ```
 即可启动交互式终端界面。界面上方会显示你的系统硬件配置（CPU、RAM、GPU、VRAM及后端），下方会列出所有模型并按综合评分排序。每一行展示了模型的评分、预估速度（tok/s）、最佳量化推荐、运行模式、内存使用率以及推荐用途。
 
@@ -61,28 +63,28 @@ llmfit
 
 ```sh
 # 以表格形式列出所有匹配的模型
-llmfit --cli
+llmfit-zh --cli
 
 # 只显示完美匹配的顶级模型，限制前 5 个
-llmfit fit --perfect -n 5
+llmfit-zh fit --perfect -n 5
 
 # 查看检测到的系统硬件信息
-llmfit system
+llmfit-zh system
 
 # 列出数据库中的所有模型
-llmfit list
+llmfit-zh list
 
 # 搜索特定模型（按名称、提供商或大小）
-llmfit search "llama 8b"
+llmfit-zh search "llama 8b"
 
 # 查看某个模型的详细信息
-llmfit info "Mistral-7B"
+llmfit-zh info "Mistral-7B"
 
 # 获取适合你的前 5 个推荐模型（JSON 输出，非常适合自动化脚本）
-llmfit recommend --json --limit 5
+llmfit-zh recommend --json --limit 5
 
 # 针对“编程”用途推荐前 3 个模型
-llmfit recommend --json --use-case coding --limit 3
+llmfit-zh recommend --json --use-case coding --limit 3
 ```
 
 ---
@@ -91,7 +93,7 @@ llmfit recommend --json --use-case coding --limit 3
 
 - **macOS（Apple Silicon M系列）**：完美支持。通过 `system_profiler` 检测统一内存，VRAM 等于系统 RAM，使用 Metal 后端加速。
 - **Windows / Linux**：支持通过 `nvidia-smi` 或 `rocm-smi` 等检测独立显卡及 VRAM。
-- **强制覆盖 GPU 内存**：如果自动检测失败，可以使用 `--memory` 参数手动指定，例如：`llmfit --memory=24G` 或 `llmfit --memory=32000M`。
+- **强制覆盖 GPU 内存**：如果自动检测失败，可以使用 `--memory` 参数手动指定，例如：`llmfit-zh --memory=24G` 或 `llmfit-zh --memory=32000M`。
 
 ---
 

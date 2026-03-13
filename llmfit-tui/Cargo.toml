@@ -1,5 +1,5 @@
 [package]
-name = "llmfit"
+name = "llmfit-zh"
 version.workspace = true
 edition = "2024"
 authors = ["Alex Jones <alex@example.com>"]
@@ -12,7 +12,7 @@ keywords = ["llm", "tui", "hardware", "inference", "models"]
 categories = ["command-line-utilities"]
 
 [[bin]]
-name = "llmfit"
+name = "llmfit-zh"
 path = "src/main.rs"
 
 [dependencies]
