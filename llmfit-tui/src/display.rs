@@ -58,10 +58,7 @@ pub fn display_all_models(models: &[LlmModel]) {
 
 pub fn display_model_fits(fits: &[ModelFit]) {
     if fits.is_empty() {
-        println!(
-            "\n{}",
-            "未找到兼容您系统的模型。".yellow()
-        );
+        println!("\n{}", "未找到兼容您系统的模型。".yellow());
         return;
     }
 
@@ -91,9 +88,7 @@ pub fn display_model_fits(fits: &[ModelFit]) {
 
     let table = Table::new(rows).with(Style::rounded()).to_string();
     println!("{}", table);
-    println!(
-        "  注: tok/s 速度仅为基准预估；实际运行速度取决于推理引擎与系统负载。"
-    );
+    println!("  注: tok/s 速度仅为基准预估；实际运行速度取决于推理引擎与系统负载。");
 }
 
 pub fn display_model_detail(fit: &ModelFit) {
@@ -103,11 +98,7 @@ pub fn display_model_detail(fit: &ModelFit) {
     println!("{}: {}", "参数规模".bold(), fit.model.parameter_count);
     println!("{}: {}", "推荐量化".bold(), fit.model.quantization);
     println!("{}: {}", "最佳量化".bold(), fit.best_quant);
-    println!(
-        "{}: {} tokens",
-        "上下文".bold(),
-        fit.model.context_length
-    );
+    println!("{}: {} tokens", "上下文".bold(), fit.model.context_length);
     println!("{}: {}", "用途".bold(), fit.model.use_case);
     println!("{}: {}", "分类".bold(), fit.use_case.label());
     if let Some(ref date) = fit.model.release_date {
@@ -218,11 +209,7 @@ pub fn display_model_diff(fits: &[ModelFit], sort_label: &str) {
     }
 
     println!("\n{}", "=== 模型对比分析 ===".bold().cyan());
-    println!(
-        "正在对比 {} 个模型 (按 {} 排序)\n",
-        fits.len(),
-        sort_label
-    );
+    println!("正在对比 {} 个模型 (按 {} 排序)\n", fits.len(), sort_label);
 
     let metric_width = 20usize;
     let col_width = 32usize;
@@ -363,18 +350,13 @@ fn truncate_to_width(input: &str, width: usize) -> String {
 
 pub fn display_search_results(models: &[&LlmModel], query: &str) {
     if models.is_empty() {
-        println!(
-            "\n{}",
-            format!("未找到匹配 '{}' 的模型", query).yellow()
-        );
+        println!("\n{}", format!("未找到匹配 '{}' 的模型", query).yellow());
         return;
     }
 
     println!(
         "\n{}",
-        format!("=== '{}' 的搜索结果 ===", query)
-            .bold()
-            .cyan()
+        format!("=== '{}' 的搜索结果 ===", query).bold().cyan()
     );
     println!("找到 {} 个模型\n", models.len());
 

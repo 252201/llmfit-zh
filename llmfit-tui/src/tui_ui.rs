@@ -183,10 +183,7 @@ fn draw_system_bar(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
     if app.backend_hidden_count > 0 {
         spans.push(Span::styled("  │  ", Style::default().fg(tc.muted)));
         spans.push(Span::styled(
-            format!(
-                "已隐藏 {} 个模型 (不兼容的后端)",
-                app.backend_hidden_count
-            ),
+            format!("已隐藏 {} 个模型 (不兼容的后端)", app.backend_hidden_count),
             Style::default().fg(tc.muted),
         ));
     }
@@ -235,10 +232,7 @@ fn draw_search_and_filters(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeC
     };
 
     let search_text = if app.search_query.is_empty() && app.input_mode == InputMode::Normal {
-        Line::from(Span::styled(
-            "按 / 搜索...",
-            Style::default().fg(tc.muted),
-        ))
+        Line::from(Span::styled("按 / 搜索...", Style::default().fg(tc.muted)))
     } else {
         Line::from(Span::styled(&app.search_query, Style::default().fg(tc.fg)))
     };
@@ -458,8 +452,20 @@ fn pull_indicator(percent: Option<f64>, tick: u64) -> String {
 fn draw_table(frame: &mut Frame, app: &mut App, area: Rect, tc: &ThemeColors) {
     let sort_col = app.sort_column;
     let header_names = [
-        "", "安装", "模型", "提供商", "参数", "评分", "tok/s*", "量化", "模式", "显存 %",
-        "上下文", "日期", "匹配", "用途",
+        "",
+        "安装",
+        "模型",
+        "提供商",
+        "参数",
+        "评分",
+        "tok/s*",
+        "量化",
+        "模式",
+        "显存 %",
+        "上下文",
+        "日期",
+        "匹配",
+        "用途",
     ];
     let sort_col_idx: Option<usize> = match sort_col {
         SortColumn::Score => Some(5),
@@ -835,14 +841,7 @@ fn draw_compare(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
         context_style: ctx_style,
     };
 
-    render_compare_panel(
-        frame,
-        cols[0],
-        tc,
-        " 已标记 (基准) ",
-        left,
-        &left_metrics,
-    );
+    render_compare_panel(frame, cols[0], tc, " 已标记 (基准) ", left, &left_metrics);
     render_compare_panel(
         frame,
         cols[1],
@@ -915,10 +914,7 @@ fn render_compare_panel(
         Line::from(vec![
             Span::styled("  发布:   ", Style::default().fg(tc.muted)),
             Span::styled(
-                format!(
-                    " {}",
-                    fit.model.release_date.as_deref().unwrap_or("未知")
-                ),
+                format!(" {}", fit.model.release_date.as_deref().unwrap_or("未知")),
                 Style::default().fg(tc.fg),
             ),
         ]),
@@ -1301,9 +1297,7 @@ fn draw_detail(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
     let fit = match app.selected_fit() {
         Some(f) => f,
         None => {
-            let block = Block::default()
-                .borders(Borders::ALL)
-                .title(" 未选择模型 ");
+            let block = Block::default().borders(Borders::ALL).title(" 未选择模型 ");
             frame.render_widget(block, area);
             return;
         }
@@ -1503,10 +1497,7 @@ fn draw_detail(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
             lines.push(Line::from(vec![
                 Span::styled("  专家网络:    ", Style::default().fg(tc.muted)),
                 Span::styled(
-                    format!(
-                        "{} 激活 / {} 总共 (每 token)",
-                        active_experts, num_experts
-                    ),
+                    format!("{} 激活 / {} 总共 (每 token)", active_experts, num_experts),
                     Style::default().fg(tc.accent),
                 ),
             ]));
@@ -1550,10 +1541,7 @@ fn draw_detail(frame: &mut Frame, app: &App, area: Rect, tc: &ThemeColors) {
         } else if fit.run_mode == llmfit_core::fit::RunMode::Gpu {
             lines.push(Line::from(vec![
                 Span::styled("  执行策略:    ", Style::default().fg(tc.muted)),
-                Span::styled(
-                    "所有专家加载到显存 (最优)",
-                    Style::default().fg(tc.good),
-                ),
+                Span::styled("所有专家加载到显存 (最优)", Style::default().fg(tc.good)),
             ]));
         }
     }
@@ -2260,10 +2248,7 @@ fn status_keys_and_mode(app: &App) -> (String, String) {
     match app.input_mode {
         InputMode::Normal => {
             if app.show_multi_compare {
-                return (
-                    " ←/→/hl:滚动  q/Esc:关闭".to_string(),
-                    "对比".to_string(),
-                );
+                return (" ←/→/hl:滚动  q/Esc:关闭".to_string(), "对比".to_string());
             }
             let detail_key = if app.show_detail {
                 "Enter:表格"
@@ -2301,12 +2286,27 @@ fn status_keys_and_mode(app: &App) -> (String, String) {
         }
         InputMode::Select => {
             let header_names = [
-                "", "安装", "模型", "提供商", "参数", "评分", "tok/s*", "量化", "模式",
-                "内存 %", "上下文", "日期", "匹配", "用途",
+                "",
+                "安装",
+                "模型",
+                "提供商",
+                "参数",
+                "评分",
+                "tok/s*",
+                "量化",
+                "模式",
+                "内存 %",
+                "上下文",
+                "日期",
+                "匹配",
+                "用途",
             ];
             let col_name = header_names.get(app.select_column).unwrap_or(&"");
             (
-                format!(" ←/→:选择列  ↑↓:导航  Enter:过滤列 [{}]  Esc:退出", col_name),
+                format!(
+                    " ←/→:选择列  ↑↓:导航  Enter:过滤列 [{}]  Esc:退出",
+                    col_name
+                ),
                 "单列过滤".to_string(),
             )
         }

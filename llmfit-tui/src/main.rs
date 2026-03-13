@@ -638,10 +638,7 @@ fn run_fit(
         display::display_json_fits(&specs, &fits);
     } else {
         if hidden > 0 {
-            eprintln!(
-                "({} 个模型被隐藏 — 不兼容当前的推理后端)",
-                hidden
-            );
+            eprintln!("({} 个模型被隐藏 — 不兼容当前的推理后端)", hidden);
         }
         display::display_model_fits(&fits);
     }
@@ -718,7 +715,9 @@ fn run_diff(
     }
 
     if (model_a.is_some() && model_b.is_none()) || (model_a.is_none() && model_b.is_some()) {
-        eprintln!("错误: 必须同时提供两个模型名称进行对比，或者不提供名称以自动对比排名前 N 的模型");
+        eprintln!(
+            "错误: 必须同时提供两个模型名称进行对比，或者不提供名称以自动对比排名前 N 的模型"
+        );
         std::process::exit(1);
     }
 
@@ -974,16 +973,10 @@ fn run_download(
         repo
     } else {
         // Search HuggingFace
-        println!(
-            "正在 HuggingFace 搜索匹配 '{}' 的 GGUF 模型...",
-            model
-        );
+        println!("正在 HuggingFace 搜索匹配 '{}' 的 GGUF 模型...", model);
         let results = LlamaCppProvider::search_hf_gguf(model);
         if results.is_empty() {
-            eprintln!(
-                "未找到与 '{}' 匹配的 GGUF 模型。请尝试其他搜索词。",
-                model
-            );
+            eprintln!("未找到与 '{}' 匹配的 GGUF 模型。请尝试其他搜索词。", model);
             eprintln!("提示: 使用 'llmfit hf-search <query>' 浏览可用模型。");
             std::process::exit(1);
         }
@@ -1031,10 +1024,7 @@ fn run_download(
         {
             (f.clone(), *s)
         } else {
-            eprintln!(
-                "在 {} 中未找到匹配量化级别 '{}' 的 GGUF 文件。",
-                repo_id, q
-            );
+            eprintln!("在 {} 中未找到匹配量化级别 '{}' 的 GGUF 文件。", repo_id, q);
             eprintln!("\n可用文件:");
             for (f, s) in &files {
                 let size_str = format!("{:.1} GB", *s as f64 / 1_073_741_824.0);
@@ -1140,10 +1130,7 @@ fn run_download(
 fn run_hf_search(query: &str, limit: usize) {
     use llmfit_core::providers::LlamaCppProvider;
 
-    println!(
-        "正在 HuggingFace 搜索匹配 '{}' 的 GGUF 模型...\n",
-        query
-    );
+    println!("正在 HuggingFace 搜索匹配 '{}' 的 GGUF 模型...\n", query);
     let results = LlamaCppProvider::search_hf_gguf(query);
 
     if results.is_empty() {
@@ -1354,9 +1341,9 @@ fn main() {
 
                 if results.len() > 1 {
                     println!("\n找到多个模型。请提供更具体的名称:");
-                for m in results {
-                    println!("  - {}", m.name);
-                }
+                    for m in results {
+                        println!("  - {}", m.name);
+                    }
                     return;
                 }
 
@@ -1549,6 +1536,6 @@ mod tests {
             mock_fit("org/model-a-instruct", FitLevel::Perfect),
         ];
         let err = find_fit_index_by_selector(&fits, "model-a").expect_err("should be ambiguous");
-        assert!(err.contains("Multiple models match"));
+        assert!(err.contains("找到多个匹配"));
     }
 }
