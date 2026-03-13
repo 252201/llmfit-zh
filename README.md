@@ -13,7 +13,7 @@
 你现在可以通过以下一条命令直接在终端里安装编译好这个汉化版（这需要你的电脑里已安装 [Rust](https://rustup.rs/)）：
 
 ```sh
-cargo install --git https://github.com/252201/llmfit-zh.git
+cargo install --git https://github.com/252201/llmfit-zh.git llmfit
 ```
 
 安装完成后，直接在终端里输入 `llmfit` 即可启动交互式的汉化版界面。
